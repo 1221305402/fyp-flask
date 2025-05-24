@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Activity Log</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- User Info Bar -->
+    <div class="topbar">
+        <b>Logged in as: {{ session['username'] }} ({{ session['role'] }})</b>
+    </div>
+
+    <!-- Main Content -->
+    <h1>Admin Activity Log</h1>
+    
+    <!-- Activity Log Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Admin</th>
+                <th>Action</th>
+                <th>Target UID</th>
+                <th>Target Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log['timestamp'] }}</td>
+                <td>{{ log['admin'] }}</td>
+                <td>{{ log['action'] }}</td>
+                <td>{{ log.get('target_uid', '') }}</td>
+                <td>{{ log.get('target_role', '') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Login Form Container -->
+    <div class="login-box">
+        <h2>Admin Login</h2>
+        
+        <!-- Login Form -->
+        <form method="post">
+            <input class="login-input" type="text" name="username" placeholder="Username" required autofocus>
+            <input class="login-input" type="password" name="password" placeholder="Password" required>
+            <button class="login-input" type="submit">Login</button>
+        </form>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html> 

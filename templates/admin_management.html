@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Custom styles for admin management */
+        .action-btn { width: auto; min-width: 60px; padding: 4px 10px; margin-right: 4px; font-size: 14px; display: inline-block; }
+        .edit-form-flex { display: flex; gap: 16px; align-items: center; }
+        .edit-form-flex input { min-width: 120px; font-size: 14px; }
+        .edit-form-flex span { min-width: 180px; display: inline-block; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to all edit buttons
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const adminId = this.dataset.adminId;
+                    document.getElementById('edit-row-' + adminId).style.display = 'table-row';
+                    document.getElementById('view-row-' + adminId).style.display = 'none';
+                });
+            });
+
+            // Add click handlers to all cancel buttons
+            document.querySelectorAll('.cancel-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const adminId = this.dataset.adminId;
+                    document.getElementById('edit-row-' + adminId).style.display = 'none';
+                    document.getElementById('view-row-' + adminId).style.display = 'table-row';
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- User Info Bar -->
+    <div class="topbar">
+        <b>Logged in as: {{ session['username'] }} ({{ session['role'] }})</b>
+    </div>
+
+    <!-- Main Content -->
+    <h1>Admin User Management</h1>
+
+    <!-- Filter Form -->
+    <form class="filter-form" method="get" action="/manage_admins">
+        <label>Username: <input type="text" name="username" value="{{ username_filter }}"></label>
+        <button type="submit">Filter</button>
+        <a href="/manage_admins">Clear</a>
+    </form>
+
+    <!-- Add New Admin Form -->
+    <div class="add-admin-form">
+        <h2>Add New Admin</h2>
+        <form method="post" action="/add_admin">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Add Admin</button>
+        </form>
+    </div>
+
+    <!-- Existing Admins Table -->
+    <h2>Existing Admins</h2>
+    <table>
+        <thead>
+            <tr>
+                <th><a class="sort-link {% if sort_field == 'admin_id' %}active{% endif %}" href="?sort=admin_id&dir={{ 'asc' if sort_field != 'admin_id' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}">Admin ID</a></th>
+                <th><a class="sort-link {% if sort_field == 'username' %}active{% endif %}" href="?sort=username&dir={{ 'asc' if sort_field != 'username' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}">Username</a></th>
+                <th>Password</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+            <tr id="view-row-{{ admin['admin_id'] }}">
+                <td>{{ admin['admin_id'] }}</td>
+                <td>{{ admin['username'] }}</td>
+                <td>{{ admin.get('password', '') }}</td>
+                <td class="actions">
+                    <button type="button" class="action-btn edit-btn" data-admin-id="{{ admin['admin_id']|e }}">Edit</button>
+                    <form method="post" action="/delete_admin/{{ admin['admin_id'] }}" style="display:inline;">
+                        <button type="submit" class="action-btn" style="background:#ffdddd;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ admin['admin_id'] }}" style="display:none;">
+                <td colspan="4" style="padding:0;">
+                    <form method="post" action="/edit_admin/{{ admin['admin_id'] }}" class="edit-form-flex" style="margin:0; width:100%;">
+                        <span>{{ admin['admin_id'] }}</span>
+                        <input type="text" name="username" value="{{ admin['username'] }}" required>
+                        <input type="text" name="password" value="{{ admin.get('password', '') }}" required autocomplete="off">
+                        <button type="submit" class="action-btn">Save</button>
+                        <button type="button" class="action-btn cancel-btn" data-admin-id="{{ admin['admin_id']|e }}">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

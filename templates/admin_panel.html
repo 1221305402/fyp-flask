@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // JavaScript functions for edit form toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to all edit buttons
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const uid = this.dataset.uid;
+                    document.getElementById('edit-row-' + uid).style.display = 'table-row';
+                    document.getElementById('view-row-' + uid).style.display = 'none';
+                });
+            });
+
+            // Add click handlers to all cancel buttons
+            document.querySelectorAll('.cancel-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const uid = this.dataset.uid;
+                    document.getElementById('edit-row-' + uid).style.display = 'none';
+                    document.getElementById('view-row-' + uid).style.display = 'table-row';
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <!-- User Info Bar -->
+        <div class="topbar">
+            <b>Logged in as: {{ session['username'] }} ({{ session['role'] }})</b>
+        </div>
+
+        <!-- Main Content -->
+        <h1>Firebase User Admin Panel</h1>
+
+        <!-- Filter Form -->
+        <form class="filter-form" method="get" action="/">
+            <label>Username: <input type="text" name="username" value="{{ username_filter }}"></label>
+            <label>Email: <input type="text" name="email" value="{{ email_filter }}"></label>
+            <button type="submit">Filter</button>
+            <a href="/">Clear</a>
+        </form>
+
+        <!-- Users Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th><a class="sort-link {% if sort_field == 'uid' %}active{% endif %}" href="?sort=uid&dir={{ 'asc' if sort_field != 'uid' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}&email={{ email_filter }}">UID</a></th>
+                    <th><a class="sort-link {% if sort_field == 'username' %}active{% endif %}" href="?sort=username&dir={{ 'asc' if sort_field != 'username' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}&email={{ email_filter }}">Username</a></th>
+                    <th><a class="sort-link {% if sort_field == 'email' %}active{% endif %}" href="?sort=email&dir={{ 'asc' if sort_field != 'email' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}&email={{ email_filter }}">Email</a></th>
+                    <th><a class="sort-link {% if sort_field == 'registration_date' %}active{% endif %}" href="?sort=registration_date&dir={{ 'asc' if sort_field != 'registration_date' or sort_dir == 'desc' else 'desc' }}&username={{ username_filter }}&email={{ email_filter }}">Registration Date</a></th>
+                    <th>Password</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr id="view-row-{{ user['uid'] }}">
+                    <td>{{ user['uid'] }}</td>
+                    <td>{{ user.get('username', '') }}</td>
+                    <td>{{ user.get('email', '') }}</td>
+                    <td>{{ user.get('registration_date', '') }}</td>
+                    <td class="password-cell">{{ user.get('password', '******') }}</td>
+                    <td class="actions">
+                        <button type="button" class="action-btn edit-btn" data-uid="{{ user['uid']|e }}">Edit</button>
+                        <form method="post" action="/delete/{{ user['uid'] }}" style="display:inline;">
+                            <button type="submit" class="action-btn" style="background:#ffdddd;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr id="edit-row-{{ user['uid'] }}" style="display:none;">
+                    <form method="post" action="/edit/{{ user['uid'] }}" class="edit-form-flex" style="display:flex; align-items:center; gap:16px; width:100%;">
+                        <td>{{ user['uid'] }}</td>
+                        <td><input type="text" name="username" value="{{ user.get('username', '') }}" required></td>
+                        <td>{{ user.get('email', '') }}</td>
+                        <td>{{ user.get('registration_date', '') }}</td>
+                        <td><input type="text" name="password" value="{{ user.get('password', '') }}" required autocomplete="off"></td>
+                        <td>
+                            <button type="submit" class="action-btn">Save</button>
+                            <button type="button" class="action-btn cancel-btn" data-uid="{{ user['uid']|e }}">Cancel</button>
+                        </td>
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html> 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidance History</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- User Info Bar -->
+    <div class="topbar">
+        <b>Logged in as: {{ session['username'] }} ({{ session['role'] }})</b>
+    </div>
+
+    <!-- Main Content -->
+    <h1>Guidance History</h1>
+
+    <!-- Filter Form -->
+    <form class="filter-form" method="get">
+        <label>User ID: <input type="text" name="userId" value="{{ user_id_filter }}"></label>
+        <label>Object Name: <input type="text" name="objectName" value="{{ object_name_filter }}"></label>
+        <button type="submit">Filter</button>
+        <a href="/guidance_history">Clear</a>
+    </form>
+
+    <!-- Guidance History Table -->
+    <table>
+        <thead>
+            <tr>
+                <th><a class="sort-link {% if sort_field == 'id' %}active{% endif %}" href="?sort=id&dir={{ 'asc' if sort_field != 'id' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">ID</a></th>
+                <th><a class="sort-link {% if sort_field == 'userId' %}active{% endif %}" href="?sort=userId&dir={{ 'asc' if sort_field != 'userId' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">User ID</a></th>
+                <th><a class="sort-link {% if sort_field == 'date' %}active{% endif %}" href="?sort=date&dir={{ 'asc' if sort_field != 'date' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">Date</a></th>
+                <th><a class="sort-link {% if sort_field == 'objectName' %}active{% endif %}" href="?sort=objectName&dir={{ 'asc' if sort_field != 'objectName' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">Object Name</a></th>
+                <th><a class="sort-link {% if sort_field == 'distance' %}active{% endif %}" href="?sort=distance&dir={{ 'asc' if sort_field != 'distance' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">Distance</a></th>
+                <th><a class="sort-link {% if sort_field == 'confidence' %}active{% endif %}" href="?sort=confidence&dir={{ 'asc' if sort_field != 'confidence' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">Confidence</a></th>
+                <th><a class="sort-link {% if sort_field == 'timestamp' %}active{% endif %}" href="?sort=timestamp&dir={{ 'asc' if sort_field != 'timestamp' or sort_dir == 'desc' else 'desc' }}&userId={{ user_id_filter }}&objectName={{ object_name_filter }}">Timestamp</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in guidance %}
+            <tr>
+                <td>{{ item['id'] }}</td>
+                <td>{{ item.get('userId', '') }}</td>
+                <td>{{ item.get('date', '') }}</td>
+                <td>{{ item.get('objectName', '') }}</td>
+                <td>{{ item.get('distance', '') }}</td>
+                <td>{{ item.get('confidence', '') }}</td>
+                <td>{{ item.get('timestamp', '') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

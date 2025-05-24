@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:block" id="leftMenu">
+        <button style="display:none" onclick="closeLeftMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
+        <!-- Navigation Links -->
+        <a href="/" class="w3-bar-item w3-button {% if active_page == 'individuals' %}w3-blue{% endif %}">Visual Impaired Individual Data</a>
+        <a href="/guidance_history" class="w3-bar-item w3-button {% if active_page == 'guidance' %}w3-blue{% endif %}">Guidance Data</a>
+        {% if session['role'] == 'super_admin' %}
+            <a href="/manage_admins" class="w3-bar-item w3-button {% if active_page == 'admins' %}w3-blue{% endif %}">Admin Management</a>
+            <a href="/activity_log" class="w3-bar-item w3-button {% if active_page == 'activity' %}w3-blue{% endif %}">Admin Activity Log</a>
+        {% endif %}
+        <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content-with-sidebar" style="margin-top:24px;">
+        {{ content|safe }}
+    </div>
+</body>
+</html> 
