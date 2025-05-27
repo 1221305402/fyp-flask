@@ -108,18 +108,29 @@ def edit_user(uid):
     username = request.form.get('username')
     password = request.form.get('password')
     update_data = {'username': username}
-    if password:
-        update_data['password'] = password
     
-    db.collection('visual_impaired_individuals').document(uid).update(update_data)
-    db.collection('admin_activity_log').add({
-        'admin': session['username'],
-        'action': f"edit: Changed username to {username}" + (f", password updated" if password else ""),
-        'target_uid': uid,
-        'target_role': 'user',
-        'timestamp': datetime.utcnow().isoformat()
-    })
-    flash(f'Updated user {uid}')
+    try:
+        # Update Firestore data
+        if password:
+            update_data['password'] = password
+            # Update password in Firebase Authentication
+            auth = firebase_admin.auth
+            auth.update_user(uid, password=password)
+        
+        db.collection('visual_impaired_individuals').document(uid).update(update_data)
+        
+        # Log the action
+        db.collection('admin_activity_log').add({
+            'admin': session['username'],
+            'action': f"edit: Changed username to {username}" + (f", password updated" if password else ""),
+            'target_uid': uid,
+            'target_role': 'user',
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        flash(f'Updated user {uid}')
+    except Exception as e:
+        flash(f'Error updating user: {str(e)}')
+    
     return redirect(url_for('index'))
 
 @app.route('/delete/<uid>', methods=['POST'])
