@@ -2,7 +2,7 @@ import os
 import uuid
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, auth
 from functools import wraps
 from datetime import datetime
 from dotenv import load_dotenv
@@ -114,7 +114,6 @@ def edit_user(uid):
         if password:
             update_data['password'] = password
             # Update password in Firebase Authentication
-            auth = firebase_admin.auth
             auth.update_user(uid, password=password)
         
         db.collection('visual_impaired_individuals').document(uid).update(update_data)
