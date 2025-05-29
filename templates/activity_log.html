@@ -14,16 +14,25 @@
 
     <!-- Main Content -->
     <h1>Admin Activity Log</h1>
+
+    <!-- Filter Form -->
+    <form class="filter-form" method="get">
+        <label>Admin: <input type="text" name="admin" value="{{ admin_filter }}"></label>
+        <label>Action: <input type="text" name="action" value="{{ action_filter }}"></label>
+        <label>Target UID: <input type="text" name="targetUid" value="{{ target_uid_filter }}"></label>
+        <button type="submit">Filter</button>
+        <a href="/activity_log">Clear</a>
+    </form>
     
     <!-- Activity Log Table -->
     <table>
         <thead>
             <tr>
-                <th>Timestamp</th>
-                <th>Admin</th>
-                <th>Action</th>
-                <th>Target UID</th>
-                <th>Target Role</th>
+                <th><a class="sort-link {% if sort_field == 'timestamp' %}active{% endif %}" href="?sort=timestamp&dir={{ 'asc' if sort_field != 'timestamp' or sort_dir == 'desc' else 'desc' }}&admin={{ admin_filter }}&action={{ action_filter }}&targetUid={{ target_uid_filter }}">Timestamp</a></th>
+                <th><a class="sort-link {% if sort_field == 'admin' %}active{% endif %}" href="?sort=admin&dir={{ 'asc' if sort_field != 'admin' or sort_dir == 'desc' else 'desc' }}&admin={{ admin_filter }}&action={{ action_filter }}&targetUid={{ target_uid_filter }}">Admin</a></th>
+                <th><a class="sort-link {% if sort_field == 'action' %}active{% endif %}" href="?sort=action&dir={{ 'asc' if sort_field != 'action' or sort_dir == 'desc' else 'desc' }}&admin={{ admin_filter }}&action={{ action_filter }}&targetUid={{ target_uid_filter }}">Action</a></th>
+                <th><a class="sort-link {% if sort_field == 'target_uid' %}active{% endif %}" href="?sort=target_uid&dir={{ 'asc' if sort_field != 'target_uid' or sort_dir == 'desc' else 'desc' }}&admin={{ admin_filter }}&action={{ action_filter }}&targetUid={{ target_uid_filter }}">Target UID</a></th>
+                <th><a class="sort-link {% if sort_field == 'target_role' %}active{% endif %}" href="?sort=target_role&dir={{ 'asc' if sort_field != 'target_role' or sort_dir == 'desc' else 'desc' }}&admin={{ admin_filter }}&action={{ action_filter }}&targetUid={{ target_uid_filter }}">Target Role</a></th>
             </tr>
         </thead>
         <tbody>

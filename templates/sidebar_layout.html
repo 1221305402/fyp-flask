@@ -13,7 +13,7 @@
         <button style="display:none" onclick="closeLeftMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
         <!-- Navigation Links -->
         <a href="/" class="w3-bar-item w3-button {% if active_page == 'individuals' %}w3-blue{% endif %}">Visual Impaired Individual Data</a>
-        <a href="/guidance_history" class="w3-bar-item w3-button {% if active_page == 'guidance' %}w3-blue{% endif %}">Guidance Data</a>
+        <a href="/guidance_history" class="w3-bar-item w3-button {% if active_page == 'guidance' %}w3-blue{% endif %}">Guidance  History Data</a>
         {% if session['role'] == 'super_admin' %}
             <a href="/manage_admins" class="w3-bar-item w3-button {% if active_page == 'admins' %}w3-blue{% endif %}">Admin Management</a>
             <a href="/activity_log" class="w3-bar-item w3-button {% if active_page == 'activity' %}w3-blue{% endif %}">Admin Activity Log</a>

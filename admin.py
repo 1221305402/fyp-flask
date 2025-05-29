@@ -152,10 +152,33 @@ def delete_user(uid):
 @superadmin_required
 def activity_log():
     """Display admin activity log"""
-    logs_ref = db.collection('admin_activity_log').order_by('timestamp', 
-                                                          direction=firestore.Query.DESCENDING).limit(100)
-    logs = [doc.to_dict() for doc in logs_ref.stream()]
-    content = render_template('activity_log.html', logs=logs, session=session)
+    # Get sorting and filtering parameters
+    sort_field = request.args.get('sort', 'timestamp')
+    sort_dir = request.args.get('dir', 'desc')
+    admin_filter = request.args.get('admin', None)
+    action_filter = request.args.get('action', None)
+    target_uid_filter = request.args.get('targetUid', None)
+
+    # Query Firestore with sorting and filtering
+    direction = firestore.Query.DESCENDING if sort_dir == 'desc' else firestore.Query.ASCENDING
+    logs_ref = db.collection('admin_activity_log').order_by(sort_field, direction=direction)
+
+    logs = []
+    for doc in logs_ref.stream():
+        data = doc.to_dict()
+        if admin_filter and admin_filter.lower() not in data.get('admin', '').lower():
+            continue
+        if action_filter and action_filter.lower() not in data.get('action', '').lower():
+            continue
+        if target_uid_filter and data.get('target_uid', '') != target_uid_filter:
+            continue
+        logs.append(data)
+
+    content = render_template('activity_log.html', logs=logs,
+                            sort_field=sort_field, sort_dir=sort_dir,
+                            admin_filter=admin_filter or '',
+                            action_filter=action_filter or '',
+                            target_uid_filter=target_uid_filter or '')
     return render_template('sidebar_layout.html', title='Admin Activity Log', 
                          content=content, session=session, active_page='activity')
 
